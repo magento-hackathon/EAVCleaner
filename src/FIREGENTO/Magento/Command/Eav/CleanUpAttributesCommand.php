@@ -90,7 +90,9 @@ class CleanUpAttributesCommand extends AbstractCommand
                                     AND attribute_id NOT IN (' . $attributeSets[$product->getAttributeSetId()] . ')
                                     AND attribute_id IN (' . $userDefined . ')';
                         $result = $connection->query($sql);
-                        $output->write($result->rowCount() . ' rows were deleted.');
+                        if($result->rowCount() > 0) {
+                            $output->write($result->rowCount() . ' rows were deleted.');
+                        }
                     }
                 }
 
@@ -98,9 +100,7 @@ class CleanUpAttributesCommand extends AbstractCommand
                 $collection->clear();
             }
 
-            $output->writeln('Done!');
-
-
+            $this->_info('Done!');
         }
     }
 
