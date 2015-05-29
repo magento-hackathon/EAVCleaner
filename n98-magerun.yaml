@@ -4,3 +4,6 @@ autoloaders:
 commands:
    customCommands:
        - FIREGENTO\Magento\Command\Eav\ConfigValuesCommand
+       - FIREGENTO\Magento\Command\Eav\CleanUpAttributesCommand
+
+
