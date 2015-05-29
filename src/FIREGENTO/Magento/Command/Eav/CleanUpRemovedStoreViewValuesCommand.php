@@ -44,10 +44,10 @@ class CleanUpRemovedStoreViewValuesCommand extends AbstractCommand
                 );
 
                 $output->writeln("Clean up $count rows in $prodTable");
-
+                
                 if (!$isDryRun) {
-                    $db->fetchOne("DELETE FROM $prodTable"
-                        . " WHERE $prodTable.store_id NOT IN (SELECT $storeTable.store_id FROM $storeTable)"
+                    $db->query("DELETE joker FROM $prodTable AS joker"
+                        . " WHERE joker.store_id NOT IN (SELECT $storeTable.store_id FROM $storeTable)"
                     );
                 }
             }
