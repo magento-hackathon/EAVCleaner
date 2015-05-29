@@ -112,7 +112,7 @@ class CleanUpAttributesCommand extends AbstractCommand
                 $currentPage++;
                 $collection->clear();
             }
-            if ($boolFixed) $this->_info('We fix in your Database '.$intFixedRow.' Rows :-) Done!');
+            if ($boolFixed) $this->_info('We fix your Database '.$intFixedRow.' Rows :-) Done!');
             else $this->_info('Done without any change!');
 
         }
