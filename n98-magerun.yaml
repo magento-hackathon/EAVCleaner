@@ -8,3 +8,4 @@ commands:
        - FIREGENTO\Magento\Command\Eav\CleanUpStoreViewValuesCommand
 
 
+       - FIREGENTO\Magento\Command\Eav\MessdataCommand
