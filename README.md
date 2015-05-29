@@ -9,7 +9,7 @@ What do we check for:
 * Check if a sourcemodel is used but not allowed for attributes like text. (done)
 * Check if the assigned sourcemodel, backendmodel still exist. (done)
 * Check if the attributetype was changed for example from text to select and delete wrong values. (TODO)
-* Check if there are values for storeviews that don't exist anymore (shouldn't happen) (TODO)
+* Check if there are values for storeviews that don't exist anymore (shouldn't happen) (done)
 
 ### Ideas
 
