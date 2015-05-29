@@ -20,6 +20,13 @@ class CleanUpAttributesCommand extends AbstractCommand
     }
 
     /**
+     * Testcase:
+     * 1. add an attribute and assign the attribute to any attribute set
+     * 2. create/edit a product with this attribute set
+     * 3. remove the link between attribute set and attribute (via backend)
+     * 4. the product values are still in the database
+     * 5. solution run this script ;-)
+     *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
@@ -83,7 +90,9 @@ class CleanUpAttributesCommand extends AbstractCommand
                         $attributeSets[$product->getAttributeSetId()] = implode(',', $attrIds);
                     }
 
-                    //deleting extra product attributes values for each backend type
+                    //deleting extra product attributes values for each backend type if the are not link to any
+                    //attribute set and user defined
+                    
                     foreach ($types as $type) {
                         $sql    = 'DELETE FROM `' . $entityTable . '_' . $type . '`
                                 WHERE `entity_id` = ' . $product->getId() . '
