@@ -51,20 +51,20 @@ class CheckAttributeModelsCommand extends AbstractCommand
                 if ($backendModel != '') {
                     $testBackendModel = \Mage::getModel($backendModel);
                     if (!$testBackendModel) {
-                        $error .= 'backend: ' . $attribute->getBackendModel();
+                        $error .= '<error>backend: ' . $attribute->getBackendModel() . '</error>';
                     }
                 }
 
                 if ($frontendModel != '') {
                     $testFrontendModel = \Mage::getModel($frontendModel);
                     if (!$testFrontendModel) {
-                        $error .= 'frontend: ' . $attribute->getFrontendModel();
+                        $error .= '<error>frontend: ' . $attribute->getFrontendModel() . '</error>';
                     }}
 
                 if ($sourceModel != '') {
                     $testSourceModel = \Mage::getModel($sourceModel);
                     if (!$testSourceModel) {
-                        $error .= 'source: ' . $attribute->getSourceModel();
+                        $error .= '<error>source: ' . $attribute->getSourceModel() . '</error>';
                     }}
 
 
