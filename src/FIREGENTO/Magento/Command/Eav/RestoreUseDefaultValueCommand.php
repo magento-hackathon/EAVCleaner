@@ -4,14 +4,14 @@ namespace FIREGENTO\Magento\Command\Eav;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanUpStoreViewValuesCommand extends AbstractCommand
+class RestoreUseDefaultValueCommand extends AbstractCommand
 {
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('eav:clean-store-view-values')
-            ->setDescription('Remove store view values that are the same as the default value')
+            ->setName('eav:restore-use-default-value')
+            ->setDescription("Restore 'Use Default Value' if the non-global value is the same as the global value")
             ->addOption('dry-run');
     }
 
