@@ -37,6 +37,8 @@ class CleanUpAttributesCommand extends AbstractCommand
         $this->_input  = $input;
         $this->_output = $output;
         $boolFixed = false; // if we fix a datarow we set this true
+        $intFixedRow = 0; // if we fix a datarow we set this true
+
         $this->_info('Start Clean Eav Values');
         $this->detectMagento($output);
         if ($this->initMagento()) {
@@ -101,6 +103,7 @@ class CleanUpAttributesCommand extends AbstractCommand
                                     AND attribute_id IN (' . $userDefined . ')';
                         $result = $connection->query($sql);
                         if($result->rowCount() > 0) {
+                            $intFixedRow += $result->rowCount();
                             $boolFixed = true;
                         }
                     }
@@ -109,7 +112,7 @@ class CleanUpAttributesCommand extends AbstractCommand
                 $currentPage++;
                 $collection->clear();
             }
-            if ($boolFixed) $this->_info('We fix your Database :-) Done!');
+            if ($boolFixed) $this->_info('We fix in your Database '.$intFixedRow.' Rows :-) Done!');
             else $this->_info('Done without any change!');
 
         }
