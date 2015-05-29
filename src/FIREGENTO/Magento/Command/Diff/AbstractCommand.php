@@ -11,6 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Lists out modules with some specific logic for community modules
  */
-abstract class AbstractCommand extends \ICYAPP\Magento\Command\AbstractCommand
+abstract class AbstractCommand extends \FIREGENTO\Magento\Command\AbstractCommand
 {
 }

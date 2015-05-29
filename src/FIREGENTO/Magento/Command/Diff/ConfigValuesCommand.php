@@ -14,7 +14,7 @@ class ConfigValuesCommand extends AbstractCommand
         parent::configure();
         $this
             ->setName('diff:configvalues')
-            ->setDescription('check if someone or something change the default value and show the diff');
+            ->setDescription('test 123');
     }
 
     /**
