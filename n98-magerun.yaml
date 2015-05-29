@@ -3,4 +3,4 @@ autoloaders:
 
 commands:
    customCommands:
-       - FIREGENTO\Magento\Command\Diff\ConfigValuesCommand
+       - FIREGENTO\Magento\Command\Eav\ConfigValuesCommand

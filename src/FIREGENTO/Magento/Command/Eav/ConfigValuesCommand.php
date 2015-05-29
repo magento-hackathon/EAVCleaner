@@ -1,6 +1,6 @@
 <?php
 
-namespace FIREGENTO\Magento\Command\Diff;
+namespace FIREGENTO\Magento\Command\Eav;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +13,7 @@ class ConfigValuesCommand extends AbstractCommand
     {
         parent::configure();
         $this
-            ->setName('diff:configvalues')
+            ->setName('eav:clean-XXX')
             ->setDescription('test 123');
     }
 

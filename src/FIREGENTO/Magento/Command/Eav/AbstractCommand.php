@@ -1,6 +1,6 @@
 <?php
 
-namespace FIREGENTO\Magento\Command\Diff;
+namespace FIREGENTO\Magento\Command\Eav;
 
 use N98\Magento\Command\AbstractMagentoCommand;
 use Symfony\Component\Console\Input\InputArgument;
