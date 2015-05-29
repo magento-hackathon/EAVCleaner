@@ -25,28 +25,30 @@
         {
             $this->detectMagento($output);
             if ($this->initMagento()) {
-                $this->_addAttribute();
+                $this->_addAttribute('messed_up_attribute_code');
                 $this->_addAttributeValues();
+                $this->_addWrongDefaultValues();
             }
 
         }
 
-        protected function _addAttribute()
+        protected function _addAttribute($attributeCode)
         {
 
             $data = array(
                 'entity_type_id' =>  4,
-                'attribute_code' => 'messed_up_attribute_code',
+                'attribute_code' => $attributeCode,
                 'backend_type' => 'text',
                 'frontend_input' => 'textarea',
                 'frontend_label' => 'messed up description ',
                 'is_required' => 0,
                 'is_user_defined' => 1,
+                'is_global' => 0,
                 'note' => 'delete me',
             );
 
             $setup = new \Mage_Eav_Model_Entity_Setup('core_setup');
-            $setup->removeAttribute('4', 'messed_up_attribute_code');
+            $setup->removeAttribute('4', $attributeCode);
 
             $eav = $this->_getEavAttributeResourceModel()->setData($data)->save();
 
@@ -67,6 +69,29 @@
             }
         }
 
+        protected function _addWrongDefaultValues()
+        {
+            $attributeCodeToMessUp = 'messed_up_attribute_code_2';
+            $this->_addAttribute($attributeCodeToMessUp);
+
+            $productCollection = $this->getProductCollection();
+            $product = $productCollection->getFirstItem();
+
+            $this->_addAttributeToAttributeSet($product->getAttributeSetId(),$attributeCodeToMessUp);
+
+            $product->addAttributeUpdate($attributeCodeToMessUp, 'value ', 0);
+            foreach (\Mage::app()->getStores() as $store) {
+                $product->addAttributeUpdate($attributeCodeToMessUp, 'value ', $store->getId());
+            }
+        }
+
+        protected function _addAttributeToAttributeSet($attributeSetId, $attributeCode)
+        {
+            $setup = new \Mage_Eav_Model_Entity_Setup('core_setup');
+            $attributeId = $setup->getAttributeId('catalog_product', $attributeCode);
+            $attributeGroupId = $setup->getDefaultAttributeGroupId('catalog_product', $attributeSetId);
+            $setup->addAttributeToSet('catalog_product', $attributeSetId, $attributeGroupId, $attributeId);
+        }
 
         /**
          * @return Mage_Core_Model_Abstract
