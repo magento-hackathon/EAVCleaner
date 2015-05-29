@@ -8,3 +8,4 @@ commands:
        - FIREGENTO\Magento\Command\Eav\CheckAttributeModelsCommand
        - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueCommand
        - FIREGENTO\Magento\Command\Eav\MessdataCommand
+       - FIREGENTO\Magento\Command\Eav\CleanUpScopeValuesCommand
