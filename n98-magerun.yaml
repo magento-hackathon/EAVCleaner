@@ -5,6 +5,10 @@ commands:
    customCommands:
        - FIREGENTO\Magento\Command\Eav\ConfigValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpAttributesCommand
+       - FIREGENTO\Magento\Command\Eav\CleanUpStoreViewValuesCommand
+       - FIREGENTO\Magento\Command\Eav\CheckAttributeModelsCommand
+
+
        - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueCommand
        - FIREGENTO\Magento\Command\Eav\CheckSourceAndBackendModelCommand
        - FIREGENTO\Magento\Command\Eav\MessdataCommand
