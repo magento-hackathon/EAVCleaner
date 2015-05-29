@@ -65,7 +65,7 @@ class CheckAttributeModelsCommand extends AbstractCommand
                     }}
 
                 if ($sourceModel != '' && ! in_array($attribute->getFrontendInput(), $sourceModelsAllowed)) {
-                    $error .= '<error>sourcemodel ' . $attribute->getSourceModel() . 'not allowed for frontend-type: ' . $attribute->getFrontendInput() . '</error>';
+                    $error .= '<error>sourcemodel ' . $attribute->getSourceModel() . ' not allowed for frontend-type: ' . $attribute->getFrontendInput() . '</error>';
                 }
                 else if ($sourceModel != '') {
                     $testSourceModel = \Mage::getModel($sourceModel);
