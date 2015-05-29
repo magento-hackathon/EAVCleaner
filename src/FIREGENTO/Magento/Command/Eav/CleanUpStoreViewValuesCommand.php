@@ -11,7 +11,8 @@ class CleanUpStoreViewValuesCommand extends AbstractCommand
         parent::configure();
         $this
             ->setName('eav:clean-store-view-values')
-            ->setDescription('Remove store view values that are the same as the default value');
+            ->setDescription('Remove store view values that are the same as the default value')
+            ->addOption('dry-run');
     }
 
     /**
@@ -24,6 +25,7 @@ class CleanUpStoreViewValuesCommand extends AbstractCommand
     {
         $this->_input = $input;
         $this->_output = $output;
+        $isDryRun = $input->getOption('dry-run');
 
         $this->detectMagento($output);
 
@@ -41,16 +43,19 @@ class CleanUpStoreViewValuesCommand extends AbstractCommand
                 foreach ($rows as $row) {
                     // Select the global value if it's the same as the non-global value
                     $results = $db->fetchAll('SELECT * FROM catalog_product_entity_' . $table
-                        . 'WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
+                        . ' WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
                         array($row['entity_type_id'], $row['attribute_id'], 0, $row['entity_id'], $row['value'])
                     );
 
                     if (count($results) > 0) {
                         foreach ($results as $result) {
-                            // Remove the non-global value
-                            $db->query('DELETE FROM catalog_product_entity_' . $table
-                                . ' WHERE value_id = ?', $row['value_id']
-                            );
+                            if (!$isDryRun) {
+                                // Remove the non-global value
+                                $db->query('DELETE FROM catalog_product_entity_' . $table
+                                    . ' WHERE value_id = ?', $row['value_id']
+                                );
+                            }
+
                             $output->writeln('Deleting ' . $row['value_id'] . ' in favor of ' . $result['value_id']
                                 . ' for attribute ' . $row['attribute_id'] . ' in table ' . $table
                             );
@@ -59,10 +64,17 @@ class CleanUpStoreViewValuesCommand extends AbstractCommand
                         }
                     }
 
-                    // Remove all non-global null values
-                    $db->query('DELETE FROM catalog_product_entity_' . $table
+                    $nullValues = $db->fetchOne('SELECT COUNT(*) FROM catalog_product_entity_' . $table
                         . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
                     );
+                    $output->writeln("Delete $nullValues NULL values");
+
+                    if (!$isDryRun) {
+                        // Remove all non-global null values
+                        $db->query('DELETE FROM catalog_product_entity_' . $table
+                            . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
+                        );
+                    }
                 }
             }
 
