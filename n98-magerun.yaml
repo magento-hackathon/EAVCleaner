@@ -5,5 +5,6 @@ commands:
    customCommands:
        - FIREGENTO\Magento\Command\Eav\ConfigValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpAttributesCommand
+       - FIREGENTO\Magento\Command\Eav\CleanUpStoreViewValuesCommand
 
 
