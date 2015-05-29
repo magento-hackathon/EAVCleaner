@@ -36,6 +36,7 @@ class CleanUpAttributesCommand extends AbstractCommand
     {
         $this->_input  = $input;
         $this->_output = $output;
+        $boolFixed = false; // if we fix a datarow we set this true
         $this->_info('Start Clean Eav Values');
         $this->detectMagento($output);
         if ($this->initMagento()) {
@@ -92,7 +93,7 @@ class CleanUpAttributesCommand extends AbstractCommand
 
                     //deleting extra product attributes values for each backend type if the are not link to any
                     //attribute set and user defined
-                    
+
                     foreach ($types as $type) {
                         $sql    = 'DELETE FROM `' . $entityTable . '_' . $type . '`
                                 WHERE `entity_id` = ' . $product->getId() . '
@@ -100,7 +101,7 @@ class CleanUpAttributesCommand extends AbstractCommand
                                     AND attribute_id IN (' . $userDefined . ')';
                         $result = $connection->query($sql);
                         if($result->rowCount() > 0) {
-                            $output->write($result->rowCount() . ' rows were deleted.');
+                            $boolFixed = true;
                         }
                     }
                 }
@@ -108,8 +109,9 @@ class CleanUpAttributesCommand extends AbstractCommand
                 $currentPage++;
                 $collection->clear();
             }
+            if ($boolFixed) $this->_info('We fix your Database :-) Done!');
+            else $this->_info('Done without any change!');
 
-            $this->_info('Done!');
         }
     }
 
