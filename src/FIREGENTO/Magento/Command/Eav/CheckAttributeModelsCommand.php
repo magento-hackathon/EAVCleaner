@@ -31,6 +31,9 @@ class CheckAttributeModelsCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+        $sourceModelsAllowed = array('select', 'multiselect', 'hidden');
+
         $this->detectMagento($output);
         if ($this->initMagento()) {
             $table = array();
@@ -51,20 +54,23 @@ class CheckAttributeModelsCommand extends AbstractCommand
                 if ($backendModel != '') {
                     $testBackendModel = \Mage::getModel($backendModel);
                     if (!$testBackendModel) {
-                        $error .= '<error>backend: ' . $attribute->getBackendModel() . '</error>';
+                        $error .= '<error>backend-model not exists: ' . $attribute->getBackendModel() . '</error>';
                     }
                 }
 
                 if ($frontendModel != '') {
                     $testFrontendModel = \Mage::getModel($frontendModel);
                     if (!$testFrontendModel) {
-                        $error .= '<error>frontend: ' . $attribute->getFrontendModel() . '</error>';
+                        $error .= '<error>frontend-model not exits: ' . $attribute->getFrontendModel() . '</error>';
                     }}
 
-                if ($sourceModel != '') {
+                if ($sourceModel != '' && ! in_array($attribute->getFrontendInput(), $sourceModelsAllowed)) {
+                    $error .= '<error>sourcemodel ' . $attribute->getSourceModel() . 'not allowed for frontend-type: ' . $attribute->getFrontendInput() . '</error>';
+                }
+                else if ($sourceModel != '') {
                     $testSourceModel = \Mage::getModel($sourceModel);
                     if (!$testSourceModel) {
-                        $error .= '<error>source: ' . $attribute->getSourceModel() . '</error>';
+                        $error .= '<error>source-model not exists: ' . $attribute->getSourceModel() . '</error>';
                     }}
 
 
