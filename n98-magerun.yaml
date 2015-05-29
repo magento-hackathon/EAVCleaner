@@ -1,0 +1,6 @@
+autoloaders:
+  FIREGENTO: %module%/src
+
+commands:
+   customCommands:
+       - FIREGENTO\Magento\Command\Diff\ConfigValuesCommand
