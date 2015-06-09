@@ -15,3 +15,10 @@ What do we check for:
 
 * check for unused images
 * remove unused attributes
+
+### Contributors
+Benno Lippert
+Damian Luszczymak
+Joke  Puts
+Peter Jaap
+Ralf Siepker
