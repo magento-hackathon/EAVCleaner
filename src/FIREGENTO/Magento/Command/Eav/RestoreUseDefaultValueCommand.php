@@ -11,7 +11,7 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
         parent::configure();
         $this
             ->setName('eav:restore-use-default-value')
-            ->setDescription("Restore 'Use Default Value' if the non-global value is the same as the global value")
+            ->setDescription("Restore product's 'Use Default Value' if the non-global value is the same as the global value")
             ->addOption('dry-run');
     }
 
@@ -30,6 +30,7 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
         $this->detectMagento($output);
 
         if ($this->initMagento()) {
+            /** @var \Mage_Core_Model_Resource $resource */
             $resource = \Mage::getModel('core/resource');
             $db = $resource->getConnection('core_write');
             $counts = array();
@@ -56,7 +57,7 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
                                 );
                             }
 
-                            $output->writeln('Deleting ' . $row['value_id'] . ' in favor of ' . $result['value_id']
+                            $output->writeln('Deleting value ' . $row['value_id'] . ' "' . $row['value'] .'" in favor of ' . $result['value_id']
                                 . ' for attribute ' . $row['attribute_id'] . ' in table ' . $table
                             );
                             $counts[$row['attribute_id']]++;
@@ -67,7 +68,7 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
                     $nullValues = $db->fetchOne('SELECT COUNT(*) FROM catalog_product_entity_' . $table
                         . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
                     );
-                    $output->writeln("Delete $nullValues NULL values");
+                    $output->writeln("Deleting NULL value $nullValues");
 
                     if (!$isDryRun) {
                         // Remove all non-global null values
