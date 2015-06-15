@@ -16,6 +16,9 @@ What do we check for:
 * check for unused images
 * remove unused attributes
 
+### Installation
+see https://github.com/netz98/n98-magerun/wiki/Modules#where-can-modules-be-placed
+
 ### Contributors
 Benno Lippert
 Damian Luszczymak
