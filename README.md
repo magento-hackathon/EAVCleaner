@@ -10,6 +10,7 @@ What do we check for:
 * `eav:check:models` Check if the assigned sourcemodel, backendmodel and frontendmodel still exist. (done)
 * Check if the attributetype was changed for example from text to select and delete wrong values. (TODO)
 * Check if there are values for storeviews that don't exist anymore (shouldn't happen) (done)
+* `eav:check:media` List unused product images
 
 ### Ideas
 

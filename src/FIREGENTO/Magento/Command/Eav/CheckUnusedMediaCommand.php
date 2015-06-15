@@ -15,7 +15,7 @@ class CheckUnusedMediaCommand extends AbstractCommand
     {
         $this
             ->setName('eav:check:media')
-            ->setDescription('Checks unused media ')
+            ->setDescription('List unused product images')
             ->addOption(
                 'format',
                 null,
