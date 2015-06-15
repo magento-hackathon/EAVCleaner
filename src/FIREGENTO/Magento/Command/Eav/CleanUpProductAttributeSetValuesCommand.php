@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanUpAttributesCommand extends AbstractCommand
+class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
 {
     const PAGE_SIZE = 100;
 
@@ -15,8 +15,9 @@ class CleanUpAttributesCommand extends AbstractCommand
     {
         parent::configure();
         $this
-            ->setName('eav:clean-001')
-            ->setDescription('test 001');
+            ->setName('eav:clean:product-attribute-set-values')
+            ->setDescription('Remove extra attributes values if they are not linked to product attribute set')
+            ->addOption('dry-run');
     }
 
     /**
@@ -36,10 +37,10 @@ class CleanUpAttributesCommand extends AbstractCommand
     {
         $this->_input  = $input;
         $this->_output = $output;
-        $boolFixed = false; // if we fix a datarow we set this true
         $intFixedRow = 0; // if we fix a datarow we set this true
+        $isDryRun = $input->getOption('dry-run');
 
-        $this->_info('Start Clean Eav Values');
+        $this->_info('Start Cleaning Eav Values');
         $this->detectMagento($output);
         if ($this->initMagento()) {
 
@@ -97,14 +98,21 @@ class CleanUpAttributesCommand extends AbstractCommand
                     //attribute set and user defined
 
                     foreach ($types as $type) {
-                        $sql    = 'DELETE FROM `' . $entityTable . '_' . $type . '`
+                        if($isDryRun) {
+                            $sql = 'SELECT * FROM `';
+                        } else {
+                            $sql = 'DELETE FROM `';
+                        }
+                        $sql    =  $sql . $entityTable . '_' . $type . '`
                                 WHERE `entity_id` = ' . $product->getId() . '
                                     AND attribute_id NOT IN (' . $attributeSets[$product->getAttributeSetId()] . ')
                                     AND attribute_id IN (' . $userDefined . ')';
                         $result = $connection->query($sql);
                         if($result->rowCount() > 0) {
                             $intFixedRow += $result->rowCount();
-                            $boolFixed = true;
+                            if(!$isDryRun) {
+
+                            }
                         }
                     }
                 }
@@ -112,8 +120,11 @@ class CleanUpAttributesCommand extends AbstractCommand
                 $currentPage++;
                 $collection->clear();
             }
-            if ($boolFixed) $this->_info('We fix your Database '.$intFixedRow.' Rows :-) Done!');
-            else $this->_info('Done without any change!');
+            if ($intFixedRow > 0) {
+                    $this->_info('We fix your Database '. $intFixedRow.' Rows :-) Done!');
+            } else {
+                $this->_info('Done without any change!');
+            }
 
         }
     }
