@@ -9,7 +9,7 @@ What do we check for:
 * Check if a sourcemodel is used but not allowed for attributes like text. (done)
 * `eav:check:models` Check if the assigned sourcemodel, backendmodel and frontendmodel still exist. (done)
 * Check if the attributetype was changed for example from text to select and delete wrong values. (TODO)
-* Check if there are values for storeviews that don't exist anymore (shouldn't happen) (done)
+* `eav:clean:removed-store-view-values` Remove attribute values for storeviews that don't exist anymore. Use --dry-run to check result without modifying data. (done)
 * `eav:check:media` List unused product images
 
 ### Ideas
