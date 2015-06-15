@@ -10,7 +10,7 @@ class CleanUpScopeValuesCommand extends AbstractCommand
     {
         parent::configure();
         $this
-            ->setName('eav:clean-scope-values')
+            ->setName('eav:clean:scope-values')
             ->setDescription('Clean up values of attributes that changed scope')
             ->addOption('dry-run');
     }

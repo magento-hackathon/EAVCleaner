@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
 
-define('DS', DIRECTORY_SEPARATOR);
 
 class CheckUnusedMediaCommand extends AbstractCommand
 {
@@ -16,7 +15,7 @@ class CheckUnusedMediaCommand extends AbstractCommand
     {
         $this
             ->setName('eav:check:media')
-            ->setDescription('Checks unused media ')
+            ->setDescription('List unused product images')
             ->addOption(
                 'format',
                 null,
@@ -42,7 +41,6 @@ class CheckUnusedMediaCommand extends AbstractCommand
             $table = array();
 
             $imageDir = \Mage::getBaseDir('media') . DS  . 'catalog' . DS . 'product';
-
             $resource = \Mage::getSingleton('core/resource');
             $mediaGallery = $resource->getTableName('catalog_product_entity_media_gallery');
             $coreRead = $resource->getConnection('core_read');

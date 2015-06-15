@@ -14,7 +14,7 @@ class CheckAttributeModelsCommand extends AbstractCommand
     {
         $this
             ->setName('eav:check:models')
-            ->setDescription('Checks attributes with obsole models ')
+            ->setDescription('List attributes with wrong backend/frontend/source models')
             ->addOption(
                 'format',
                 null,
@@ -54,14 +54,14 @@ class CheckAttributeModelsCommand extends AbstractCommand
                 if ($backendModel != '') {
                     $testBackendModel = \Mage::getModel($backendModel);
                     if (!$testBackendModel) {
-                        $error .= '<error>backend-model not exists: ' . $attribute->getBackendModel() . '</error>';
+                        $error .= '<error>backend-model doesn\'t exist: ' . $attribute->getBackendModel() . '</error>';
                     }
                 }
 
                 if ($frontendModel != '') {
                     $testFrontendModel = \Mage::getModel($frontendModel);
                     if (!$testFrontendModel) {
-                        $error .= '<error>frontend-model not exits: ' . $attribute->getFrontendModel() . '</error>';
+                        $error .= '<error>frontend-model doesn\'t exist: ' . $attribute->getFrontendModel() . '</error>';
                     }}
 
                 if ($sourceModel != '' && ! in_array($attribute->getFrontendInput(), $sourceModelsAllowed)) {
@@ -70,7 +70,7 @@ class CheckAttributeModelsCommand extends AbstractCommand
                 else if ($sourceModel != '') {
                     $testSourceModel = \Mage::getModel($sourceModel);
                     if (!$testSourceModel) {
-                        $error .= '<error>source-model not exists: ' . $attribute->getSourceModel() . '</error>';
+                        $error .= '<error>source-model doesn\'t exist: ' . $attribute->getSourceModel() . '</error>';
                     }}
 
 
@@ -87,11 +87,11 @@ class CheckAttributeModelsCommand extends AbstractCommand
             }
 
             $headers = array();
-            $headers[] = 'code';
-            $headers[] = 'id';
+            $headers[] = 'attribute_code';
+            $headers[] = 'attribute_id';
             $headers[] = 'entity_type';
             $headers[] = 'label';
-            $headers[] = 'model';
+            $headers[] = 'error';
 
             $this->getHelper('table')
                 ->setHeaders($headers)

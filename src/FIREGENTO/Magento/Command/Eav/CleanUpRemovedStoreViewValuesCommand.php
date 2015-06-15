@@ -10,7 +10,7 @@ class CleanUpRemovedStoreViewValuesCommand extends AbstractCommand
     {
         parent::configure();
         $this
-            ->setName('eav:clean-removed-store-view-values')
+            ->setName('eav:clean:removed-store-view-values')
             ->setDescription('Clean up values from removed store views')
             ->addOption('dry-run');
     }

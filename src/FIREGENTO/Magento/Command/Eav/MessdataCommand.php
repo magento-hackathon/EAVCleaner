@@ -13,7 +13,7 @@
             parent::configure();
             $this
                 ->setName('eav:messdata')
-                ->setDescription('mess up data');
+                ->setDescription('mess up eav data - for testing purposes');
         }
 
         /**
@@ -94,7 +94,7 @@
         }
 
         /**
-         * @return Mage_Core_Model_Abstract
+         * @return \Mage_Core_Model_Abstract
          */
         protected function _getEavAttributeResourceModel()
         {
@@ -102,7 +102,7 @@
         }
 
         /**
-         * @return Mage_Core_Model_Abstract
+         * @return \Mage_Core_Model_Abstract
          */
         protected function _getCatalogProductEntity()
         {
