@@ -12,3 +12,4 @@ commands:
        - FIREGENTO\Magento\Command\Eav\CleanUpScopeValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpRemovedStoreViewValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpEntityTypeValuesCommand
+       - FIREGENTO\Magento\Command\Eav\CleanUpAttributesAndValuesWithoutParentCommand

@@ -12,6 +12,7 @@ What do we check for:
 * `eav:clean:removed-store-view-values` Remove attribute values for storeviews that don't exist anymore. Use --dry-run to check result without modifying data. (done)
 * `eav:check:media` List unused product images
 * `eav:clean:entity-type-values` Remove attribute values with wrong entity_type_id. For example the table catalog_product_entity_int should only contain entries with entity_type_id == 10. Use --dry-run to check result without modifying data.
+* `eav:clean:attributes-and-values-without-parent` Remove catalog_eav_attribute and attribute values which are missing parent entry in eav_attribute. This can happen after importing data with foreign key check switched off. Use --dry-run to check result without modifying data.
 
 ### Ideas
 
