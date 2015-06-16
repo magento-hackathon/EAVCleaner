@@ -11,6 +11,7 @@ What do we check for:
 * Check if the attributetype was changed for example from text to select and delete wrong values. (TODO)
 * `eav:clean:removed-store-view-values` Remove attribute values for storeviews that don't exist anymore. Use --dry-run to check result without modifying data. (done)
 * `eav:check:media` List unused product images
+* `eav:clean:entity-type-values` Remove attribute values with wrong entity_type_id. For example the table catalog_product_entity_int should only contain entries with entity_type_id == 10. Use --dry-run to check result without modifying data.
 
 ### Ideas
 
