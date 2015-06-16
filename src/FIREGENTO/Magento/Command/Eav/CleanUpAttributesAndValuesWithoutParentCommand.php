@@ -64,22 +64,17 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends AbstractCommand
 
             }
             //cleaning catalog_eav_attribute
-            $entityTypeCodes = array('catalog_product', 'catalog_category');
-            foreach($entityTypeCodes as $code) {
-                $entityType = \Mage::getModel('eav/entity_type')->loadByCode($code);
-                $output->writeln("<info>Cleaning orphaned attributes from catalog_eav_attribute for $code</info>");
-                $query = "SELECT * FROM catalog_eav_attribute WHERE `attribute_id` not in(SELECT attribute_id"
-                    . " FROM `eav_attribute` where entity_type_id = " . $entityType->getEntityTypeId() . ")";
-                $results = $db->fetchAll($query);
+            $output->writeln("<info>Cleaning orphaned attributes from catalog_eav_attribute</info>");
+            $query = "SELECT * FROM catalog_eav_attribute WHERE `attribute_id` not in(SELECT attribute_id FROM `eav_attribute`)";
+            $results = $db->fetchAll($query);
 
-                $output->writeln("Clean up " . count($results) . " rows in catalog_eav_attribute for " . $code);
-                $this->verboseWriteLine($output, $query);
-                $this->printVerboseQueryResult($input, $output, $results);
-                if (!$isDryRun && count($results) > 0) {
-                    $db->query("DELETE FROM catalog_eav_attribute WHERE `attribute_id` not in(SELECT attribute_id"
-                        . " FROM `eav_attribute` where entity_type_id = " . $entityType->getEntityTypeId() . ")");
-                }
+            $output->writeln("Clean up " . count($results) . " rows in catalog_eav_attribute");
+            $this->verboseWriteLine($output, $query);
+            $this->printVerboseQueryResult($input, $output, $results);
+            if (!$isDryRun && count($results) > 0) {
+                $db->query("DELETE FROM catalog_eav_attribute WHERE `attribute_id` not in(SELECT attribute_id FROM `eav_attribute`)");
             }
+
         }
     }
 }
