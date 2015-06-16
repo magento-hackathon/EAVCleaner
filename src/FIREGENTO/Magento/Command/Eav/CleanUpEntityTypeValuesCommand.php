@@ -51,47 +51,13 @@ class CleanUpEntityTypeValuesCommand extends AbstractCommand
                     $results = $db->fetchAll($query);
                     $output->writeln("Clean up " . count($results) . " rows in $entityValueTable");
                     $this->verboseWriteLine($output, $query);
-                    $this->printVerboseValueData($input, $output, $results);
+                    $this->printVerboseQueryResult($input, $output, $results);
 
                     if (!$isDryRun) {
                         $db->query("DELETE FROM $entityValueTable WHERE `entity_type_id` <> " . $entityType->getEntityTypeId());
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Print verbose information about attribute values
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param array $results
-     */
-    protected function printVerboseValueData(InputInterface $input, OutputInterface $output, $results) {
-        if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL && count($results) > 0) {
-            $headers = array();
-            $headers[] = 'value_id';
-            $headers[] = 'entity_type_id';
-            $headers[] = 'attribute_id';
-            $headers[] = 'store_id';
-            $headers[] = 'entity_id';
-            $headers[] = 'value';
-
-            $this->getHelper('table')
-                ->setHeaders($headers)
-                ->renderByFormat($output, $results, $input->getOption('format'));
-        }
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param string|array $messages
-     * @param int $type
-     */
-    protected function verboseWriteLine(OutputInterface $output, $messages, $type = OutputInterface::OUTPUT_NORMAL) {
-        if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
-            $output->writeln($messages, $type);
         }
     }
 }
