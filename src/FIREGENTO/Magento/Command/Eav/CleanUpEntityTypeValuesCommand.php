@@ -44,7 +44,7 @@ class CleanUpEntityTypeValuesCommand extends AbstractCommand
             $entityTypeCodes = array('catalog_product', 'catalog_category', 'customer', 'customer_address');
             foreach($entityTypeCodes as $code) {
                 $entityType = \Mage::getModel('eav/entity_type')->loadByCode($code);
-
+                $output->writeln("<info>Cleaning values for $code where entity_type_id != " . $entityType->getEntityTypeId() . "</info>");
                 foreach ($types as $type) {
                     $entityValueTable = $code . '_entity_' . $type;
                     $query = "SELECT * FROM $entityValueTable WHERE `entity_type_id` <> " . $entityType->getEntityTypeId();
