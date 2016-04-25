@@ -47,8 +47,8 @@ class CleanUpScopeValuesCommand extends AbstractCommand
             $types = array('varchar', 'int', 'decimal', 'text', 'datetime');
 
             foreach ($types as $type) {
-                $prodTable = 'catalog_product_entity_' . $type;
-                $attrTable = 'catalog_eav_attribute';
+                $prodTable = $this->_prefixTable('catalog_product_entity_' . $type);
+                $attrTable = $this->_prefixTable('catalog_eav_attribute');
 
                 $count = $db->fetchOne("SELECT COUNT(*)"
                     . " FROM $prodTable"

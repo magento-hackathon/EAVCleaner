@@ -51,11 +51,12 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
 
             foreach ($tables as $table) {
                 // Select all non-global values
-                $rows = $db->fetchAll('SELECT * FROM catalog_product_entity_' . $table . ' WHERE store_id != 0');
+                $fullTableName = $this->_prefixTable('catalog_product_entity_' . $table);
+                $rows = $db->fetchAll('SELECT * FROM ' . $fullTableName . ' WHERE store_id != 0');
 
                 foreach ($rows as $row) {
                     // Select the global value if it's the same as the non-global value
-                    $results = $db->fetchAll('SELECT * FROM catalog_product_entity_' . $table
+                    $results = $db->fetchAll('SELECT * FROM ' . $fullTableName
                         . ' WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
                         array($row['entity_type_id'], $row['attribute_id'], 0, $row['entity_id'], $row['value'])
                     );
@@ -64,27 +65,26 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
                         foreach ($results as $result) {
                             if (!$isDryRun) {
                                 // Remove the non-global value
-                                $db->query('DELETE FROM catalog_product_entity_' . $table
-                                    . ' WHERE value_id = ?', $row['value_id']
+                                $db->query('DELETE FROM ' . $fullTableName . ' WHERE value_id = ?', $row['value_id']
                                 );
                             }
 
                             $output->writeln('Deleting value ' . $row['value_id'] . ' "' . $row['value'] .'" in favor of ' . $result['value_id']
-                                . ' for attribute ' . $row['attribute_id'] . ' in table ' . $table
+                                . ' for attribute ' . $row['attribute_id'] . ' in table ' . $fullTableName
                             );
                             $counts[$row['attribute_id']]++;
                             $i++;
                         }
                     }
 
-                    $nullValues = $db->fetchOne('SELECT COUNT(*) FROM catalog_product_entity_' . $table
+                    $nullValues = $db->fetchOne('SELECT COUNT(*) FROM ' . $fullTableName
                         . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
                     );
                     $output->writeln("Deleting NULL value $nullValues");
 
                     if (!$isDryRun) {
                         // Remove all non-global null values
-                        $db->query('DELETE FROM catalog_product_entity_' . $table
+                        $db->query('DELETE FROM ' . $fullTableName
                             . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
                         );
                     }

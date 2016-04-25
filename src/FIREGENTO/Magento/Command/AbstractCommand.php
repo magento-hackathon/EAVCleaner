@@ -18,7 +18,8 @@ class AbstractCommand extends \N98\Magento\Command\AbstractMagentoCommand
 
     protected function _prefixTable($tbl)
     {
-        return $this->dbSettings['prefix'] . $tbl;
+        $resource = \Mage::getSingleton('core/resource');
+        return $resource->getTableName($tbl);
     }
 
 

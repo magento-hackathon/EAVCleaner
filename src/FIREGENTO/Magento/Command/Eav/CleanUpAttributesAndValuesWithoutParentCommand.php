@@ -59,9 +59,10 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends AbstractCommand
                 $output->writeln("<info>Cleaning values for $code</info>");
                 //removing attribute values
                 foreach ($types as $type) {
-                    $entityValueTable = $code . '_entity_' . $type;
+                    $eavTable = $this->_prefixTable('eav_attribute');
+                    $entityValueTable = $this->_prefixTable($code . '_entity_' . $type);
                     $query = "SELECT * FROM $entityValueTable WHERE `attribute_id` not in(SELECT attribute_id"
-                        . " FROM `eav_attribute` where entity_type_id = " . $entityType->getEntityTypeId() . ")";
+                        . " FROM `' . $eavTable . '` where entity_type_id = " . $entityType->getEntityTypeId() . ")";
                     $results = $db->fetchAll($query);
                     $output->writeln("Clean up " . count($results) . " rows in $entityValueTable");
                     $this->verboseWriteLine($output, $query);
@@ -69,7 +70,7 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends AbstractCommand
 
                     if (!$isDryRun && count($results) > 0) {
                         $db->query("DELETE FROM $entityValueTable WHERE `attribute_id` not in(SELECT attribute_id"
-                        . " FROM `eav_attribute` where entity_type_id = " . $entityType->getEntityTypeId() . ")");
+                        . " FROM `' . $eavTable . '` where entity_type_id = " . $entityType->getEntityTypeId() . ")");
                     }
                 }
 

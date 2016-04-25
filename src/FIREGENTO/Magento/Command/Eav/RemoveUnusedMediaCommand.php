@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+
 class RemoveUnusedMediaCommand extends AbstractCommand
 {
     protected function configure()
@@ -56,7 +57,7 @@ class RemoveUnusedMediaCommand extends AbstractCommand
 
             $imageDir = \Mage::getBaseDir('media') . DS  . 'catalog' . DS . 'product';
             $resource = \Mage::getSingleton('core/resource');
-            $mediaGallery = $resource->getTableName('catalog_product_entity_media_gallery');
+            $mediaGallery = $this->_prefixTable('catalog_product_entity_media_gallery');
             $coreRead = $resource->getConnection('core_read');
 
             $i=0;

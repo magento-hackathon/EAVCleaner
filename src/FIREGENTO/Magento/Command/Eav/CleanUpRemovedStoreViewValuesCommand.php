@@ -47,8 +47,8 @@ class CleanUpRemovedStoreViewValuesCommand extends AbstractCommand
             $types = array('varchar', 'int', 'decimal', 'text', 'datetime');
 
             foreach ($types as $type) {
-                $prodTable = 'catalog_product_entity_' . $type;
-                $storeTable = 'core_store';
+                $prodTable = $this->_prefixTable('catalog_product_entity_' . $type);
+                $storeTable = $this->_prefixTable('core_store');
 
                 $count = $db->fetchOne("SELECT COUNT(*)"
                     . " FROM $prodTable"
