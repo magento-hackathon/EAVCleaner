@@ -5,7 +5,7 @@ commands:
    customCommands:
        - FIREGENTO\Magento\Command\Eav\CleanUpProductAttributeSetValuesCommand
        - FIREGENTO\Magento\Command\Eav\CheckAttributeModelsCommand
-       - FIREGENTO\Magento\Command\Eav\CheckUnusedMediaCommand
+       - FIREGENTO\Magento\Command\Eav\RemoveUnusedMediaCommand
        - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueCommand
        - FIREGENTO\Magento\Command\Eav\MessdataCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpScopeValuesCommand

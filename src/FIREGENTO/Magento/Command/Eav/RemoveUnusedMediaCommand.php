@@ -10,13 +10,13 @@ use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 
-class CheckUnusedMediaCommand extends AbstractCommand
+class RemoveUnusedMediaCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('eav:check:media')
-            ->setDescription('List unused product images')
+            ->setName('eav:media:remove-unused')
+            ->setDescription('Remove unused product images')
             ->addOption('dry-run')
             ->addOption(
                 'format',
