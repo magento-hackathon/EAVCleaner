@@ -65,7 +65,11 @@ class CheckAttributeModelsCommand extends AbstractCommand
                     }}
 
                 if ($sourceModel != '' && ! in_array($attribute->getFrontendInput(), $sourceModelsAllowed)) {
-                    $error .= '<error>sourcemodel ' . $attribute->getSourceModel() . ' not allowed for frontend-type: ' . $attribute->getFrontendInput() . '</error>';
+                    $additionalMessage = null;
+                    if($attribute->getSourceModel() == 'eav/entity_attribute_source_boolean' && $attribute->getFrontendInput() != 'select') {
+                        $additionalMessage = ' - the frontend input type should be select';
+                    }
+                    $error .= '<error>sourcemodel ' . $attribute->getSourceModel() . ' not allowed for frontend input type: ' . $attribute->getFrontendInput() . $additionalMessage . '</error>';
                 }
                 else if ($sourceModel != '') {
                     $testSourceModel = \Mage::getModel($sourceModel);
