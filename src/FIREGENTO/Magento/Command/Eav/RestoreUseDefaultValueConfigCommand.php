@@ -5,14 +5,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class RestoreUseDefaultValueCommand extends AbstractCommand
+class RestoreUseDefaultValueConfigCommand extends AbstractCommand
 {
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('eav:restore-use-default-value')
-            ->setDescription("Restore product's 'Use Default Value' if the non-global value is the same as the global value")
+            ->setName('eav:config:restore-use-default-value')
+            ->setDescription("Restore config's 'Use Default Value' if the non-global value is the same as the global value")
             ->addOption('dry-run');
     }
 

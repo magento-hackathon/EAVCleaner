@@ -7,7 +7,8 @@ commands:
        - FIREGENTO\Magento\Command\Eav\CheckAttributeModelsCommand
        - FIREGENTO\Magento\Command\Eav\RemoveUnusedMediaCommand
        - FIREGENTO\Magento\Command\Eav\RemoveUnusedAttributesCommand
-       - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueCommand
+       - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueAttributesCommand
+       - FIREGENTO\Magento\Command\Eav\RestoreUseDefaultValueConfigCommand
        #- FIREGENTO\Magento\Command\Eav\MessdataCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpScopeValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpRemovedStoreViewValuesCommand
