@@ -41,63 +41,26 @@ class RestoreUseDefaultValueConfigCommand extends AbstractCommand
 
         $this->detectMagento($output);
 
+        $removedConfigValues = 0;
+
         if ($this->initMagento()) {
             /** @var \Mage_Core_Model_Resource $resource */
             $resource = \Mage::getModel('core/resource');
             $db = $resource->getConnection('core_write');
-            $counts = array();
-            $i = 0;
-            $tables = array('varchar', 'int', 'decimal', 'text', 'datetime');
 
-            foreach ($tables as $table) {
-                // Select all non-global values
-                $fullTableName = $this->_prefixTable('catalog_product_entity_' . $table);
-                $rows = $db->fetchAll('SELECT * FROM ' . $fullTableName . ' WHERE store_id != 0');
-
-                foreach ($rows as $row) {
-                    // Select the global value if it's the same as the non-global value
-                    $results = $db->fetchAll('SELECT * FROM ' . $fullTableName
-                        . ' WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
-                        array($row['entity_type_id'], $row['attribute_id'], 0, $row['entity_id'], $row['value'])
-                    );
-
-                    if (count($results) > 0) {
-                        foreach ($results as $result) {
-                            if (!$isDryRun) {
-                                // Remove the non-global value
-                                $db->query('DELETE FROM ' . $fullTableName . ' WHERE value_id = ?', $row['value_id']
-                                );
-                            }
-
-                            $output->writeln('Deleting value ' . $row['value_id'] . ' "' . $row['value'] .'" in favor of ' . $result['value_id']
-                                . ' for attribute ' . $row['attribute_id'] . ' in table ' . $fullTableName
-                            );
-                            $counts[$row['attribute_id']]++;
-                            $i++;
-                        }
+            $configData = $db->fetchAll('SELECT DISTINCT path, value FROM ' . $this->_prefixTable('core_config_data'));
+            foreach($configData as $config) {
+                $count = $db->fetchOne('SELECT COUNT(*) FROM ' . $this->_prefixTable('core_config_data') .' WHERE path = ? AND value = ?', array($config['path'], $config['value']));
+                if($count > 1) {
+                    $output->writeln('Config path ' . $config['path'] . ' with value ' . $config['value']. ' has ' . $count . ' values; deleting non-default values');
+                    if(!$isDryRun) {
+                        $db->query('DELETE FROM ' . $this->_prefixTable('core_config_data') . ' WHERE path = ? AND value = ? AND scope_id != ?', array($config['path'], $config['value'], 0));
                     }
-
-                    $nullValues = $db->fetchOne('SELECT COUNT(*) FROM ' . $fullTableName
-                        . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
-                    );
-
-                    if (!$isDryRun && $nullValues > 0) {
-                        $output->writeln("Deleting " . $nullValues ." NULL value(s) from " . $fullTableName);
-                        // Remove all non-global null values
-                        $db->query('DELETE FROM ' . $fullTableName
-                            . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
-                        );
-                    }
+                    $removedConfigValues += ($count-1);
                 }
             }
 
-            if (count($counts)) {
-                $output->writeln('Done');
-            }
-            else {
-                $output->writeln('There were no attribute values to clean up');
-            }
-
+            $output->writeln('Removed ' . $removedConfigValues . ' values from core_config_data table.');
         }
     }
 }
