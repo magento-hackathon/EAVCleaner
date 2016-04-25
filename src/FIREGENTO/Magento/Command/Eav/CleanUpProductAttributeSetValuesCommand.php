@@ -101,9 +101,13 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
                         $attributes = \Mage::getModel('catalog/product_attribute_api')->items($product->getAttributeSetId());
                         $attrIds    = array();
                         foreach ($attributes as $attribute) {
-                            $attrIds[] = $attribute['attribute_id'];
+                            if(isset($attribute['attribute_id']) && $attribute['attribute_id']) {
+                                $attrIds[] = $attribute['attribute_id'];
+                            }
                         }
-                        $attributeSets[$product->getAttributeSetId()] = implode(',', $attrIds);
+                        if($product->geAttributeSetId() && count($attrIds)) {
+                            $attributeSets[$product->getAttributeSetId()] = implode(',', $attrIds);
+                        }
                     }
 
                     //deleting extra product attributes values for each backend type if the are not link to any
@@ -122,9 +126,6 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
                         $result = $connection->query($sql);
                         if($result->rowCount() > 0) {
                             $intFixedRow += $result->rowCount();
-                            if(!$isDryRun) {
-
-                            }
                         }
                     }
                 }
