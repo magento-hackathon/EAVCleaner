@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 
 class CheckUnusedMediaCommand extends AbstractCommand
@@ -16,6 +17,7 @@ class CheckUnusedMediaCommand extends AbstractCommand
         $this
             ->setName('eav:check:media')
             ->setDescription('List unused product images')
+            ->addOption('dry-run')
             ->addOption(
                 'format',
                 null,
@@ -23,6 +25,7 @@ class CheckUnusedMediaCommand extends AbstractCommand
                 'Output Format. One of [' . implode(',', RendererFactory::getFormats()) . ']'
             )
         ;
+
     }
 
     /**
@@ -35,6 +38,18 @@ class CheckUnusedMediaCommand extends AbstractCommand
 
         $filesize = 0;
         $countFiles = 0;
+
+        $isDryRun = $input->getOption('dry-run');
+
+        if(!$isDryRun) {
+            $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
+            $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
+
+            $this->questionHelper = $this->getHelper('question');
+            if (!$this->questionHelper->ask($input, $output, $question)) {
+                return;
+            }
+        }
 
         $this->detectMagento($output);
         if ($this->initMagento()) {
@@ -59,15 +74,20 @@ class CheckUnusedMediaCommand extends AbstractCommand
 
                 $value         = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE value = ?', array($filePath));
 
-                if($value == false){
+                if($value == false) {
                     $row = array();
                     $row[] = $filePath;
                     $table[] = $row;
                     $filesize += filesize($file);
                     $countFiles++;
 
-                    #echo "## REMOVEING: " . $filePath . " ## \n";
-                    #unlink($file);
+                    echo '## REMOVING: ' . $filePath . ' ##';
+                    if(!$isDryRun) {
+                        unlink($file);
+                    } else {
+                        echo ' -- DRY RUN';
+                    }
+                    echo PHP_EOL;
 
                     $i++;
                 }
