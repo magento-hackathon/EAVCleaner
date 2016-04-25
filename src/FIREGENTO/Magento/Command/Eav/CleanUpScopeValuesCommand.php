@@ -3,6 +3,7 @@ namespace FIREGENTO\Magento\Command\Eav;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CleanUpScopeValuesCommand extends AbstractCommand
 {
@@ -25,7 +26,18 @@ class CleanUpScopeValuesCommand extends AbstractCommand
     {
         $this->_input = $input;
         $this->_output = $output;
+
         $isDryRun = $input->getOption('dry-run');
+
+        if(!$isDryRun) {
+            $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
+            $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
+
+            $this->questionHelper = $this->getHelper('question');
+            if (!$this->questionHelper->ask($input, $output, $question)) {
+                return;
+            }
+        }
 
         $this->detectMagento($output);
 

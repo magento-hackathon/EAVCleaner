@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
 {
@@ -38,7 +39,18 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
         $this->_input  = $input;
         $this->_output = $output;
         $intFixedRow = 0; // if we fix a datarow we set this true
+
         $isDryRun = $input->getOption('dry-run');
+
+        if(!$isDryRun) {
+            $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
+            $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
+
+            $this->questionHelper = $this->getHelper('question');
+            if (!$this->questionHelper->ask($input, $output, $question)) {
+                return;
+            }
+        }
 
         $this->_info('Start Cleaning Eav Values');
         $this->detectMagento($output);

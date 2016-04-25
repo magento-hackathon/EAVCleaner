@@ -9,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
 class RemoveUnusedMediaCommand extends AbstractCommand
 {
     protected function configure()
