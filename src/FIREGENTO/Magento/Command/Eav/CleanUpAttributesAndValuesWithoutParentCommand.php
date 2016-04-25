@@ -65,14 +65,14 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends AbstractCommand
             }
             //cleaning catalog_eav_attribute
             $output->writeln("<info>Cleaning orphaned attributes from catalog_eav_attribute</info>");
-            $query = "SELECT * FROM " . _prefixTable(. catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . _prefixTable('eav_attribute' . "`)";
+            $query = "SELECT * FROM " . _prefixTable('catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . _prefixTable('eav_attribute') . "`)";
             $results = $db->fetchAll($query);
 
             $output->writeln("Clean up " . count($results) . " rows in catalog_eav_attribute");
             $this->verboseWriteLine($output, $query);
             $this->printVerboseQueryResult($input, $output, $results);
             if (!$isDryRun && count($results) > 0) {
-                $db->query("DELETE * FROM " . _prefixTable(. catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . _prefixTable('eav_attribute' . "`)");
+                $db->query("DELETE * FROM " . _prefixTable('catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . _prefixTable('eav_attribute') . "`)");
             }
 
         }
