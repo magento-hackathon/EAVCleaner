@@ -55,8 +55,9 @@ class CheckUnusedMediaCommand extends AbstractCommand
                 }
 
                 $filePath      = str_replace($imageDir, "", $file);
-                $query         = 'SELECT value FROM ' . mysql_real_escape_string($mediaGallery) . ' WHERE value="' . mysql_real_escape_string($filePath) . '"';
-                $value         = $coreRead->fetchOne($query);
+                if(empty($filePath)) continue;
+
+                $value         = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE value = ?', array($filePath));
 
                 if($value == false){
                     $row = array();

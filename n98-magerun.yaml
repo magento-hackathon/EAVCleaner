@@ -3,7 +3,6 @@ autoloaders:
 
 commands:
    customCommands:
-       - FIREGENTO\Magento\Command\Eav\ConfigValuesCommand
        - FIREGENTO\Magento\Command\Eav\CleanUpProductAttributeSetValuesCommand
        - FIREGENTO\Magento\Command\Eav\CheckAttributeModelsCommand
        - FIREGENTO\Magento\Command\Eav\CheckUnusedMediaCommand
