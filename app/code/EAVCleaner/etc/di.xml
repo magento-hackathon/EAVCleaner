@@ -8,6 +8,7 @@
                 <item name="config:restore-use-default-value" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RestoreUseDefaultConfigValueCommand</item>
                 <item name="media:remove-unused" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RemoveUnusedMediaCommand</item>
                 <item name="attributes:remove-unused" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RemoveUnusedAttributesCommand</item>
+                <item name="clean:attributes-and-values-without-parent" xsi:type="object">Hackaton\EAVCleaner\Console\Command\CleanUpAttributesAndValuesWithoutParentCommand</item>
             </argument>
         </arguments>
     </type>
