@@ -1,4 +1,4 @@
-# EAV Cleaner Magerun Addon
+# EAV Cleaner Console Command
 
 Purpose of this project is to check for different flaws that can occur due to EAV and provide cleanup functions.
 
@@ -22,6 +22,10 @@ See [issues labeled enhancement](https://github.com/magento-hackathon/EAVCleaner
 ### Installation
 
 Use composer or copy the app/code/EAVCleaner folder to your installation.
+
+### Usage
+
+Run `bin/magento` in the Magento 2 root and look for the `eav:` commands.
 
 ### Contributors
 - Nikita Zhavoronkova
