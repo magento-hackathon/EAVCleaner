@@ -4,6 +4,10 @@ Purpose of this project is to check for different flaws that can occur due to EA
 
 Use --dry-run to check result without modifying data.
 
+# Magento 1 or Magento 2?
+
+The Magento 1 version is in the (master branch)https://github.com/magento-hackathon/EAVCleaner/tree/master, the Magento 2 version is in the (magento2 branch)[https://github.com/magento-hackathon/EAVCleaner/tree/magento2].
+
 # Commands
 
 * `eav:clean:product-attribute-set-values` Check for abandoned attribute values in eav tables. The attribute was removed from an attribute set the values still exist. 
