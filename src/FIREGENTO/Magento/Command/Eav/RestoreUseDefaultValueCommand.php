@@ -80,9 +80,9 @@ class RestoreUseDefaultValueCommand extends AbstractCommand
                     $nullValues = $db->fetchOne('SELECT COUNT(*) FROM ' . $fullTableName
                         . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
                     );
-                    $output->writeln("Deleting NULL value $nullValues");
 
-                    if (!$isDryRun) {
+                    if (!$isDryRun && $nullValues > 0) {
+                        $output->writeln("Deleting " . $nullValues ." NULL value(s)");
                         // Remove all non-global null values
                         $db->query('DELETE FROM ' . $fullTableName
                             . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
