@@ -19,7 +19,7 @@ class RestoreUseDefaultValueCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('eav:restore-use-default-value')
+            ->setName('eav:attributes:restore-use-default-value')
             ->setDescription("
                 Restore product's 'Use Default Value' if the non-global value is the same as the global value
             ")

@@ -4,7 +4,9 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="hello_world" xsi:type="object">Hackaton\EAVCleaner\Console\Command\HelloWorldCommand</item>
-                <item name="restore-use-default-value" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RestoreUseDefaultValueCommand</item>
+                <item name="attributes:restore-use-default-value" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RestoreUseDefaultValueCommand</item>
+                <item name="media:remove-unused" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RemoveUnusedMediaCommand</item>
+                <item name="attributes:remove-unused" xsi:type="object">Hackaton\EAVCleaner\Console\Command\RemoveUnusedAttributesCommand</item>
             </argument>
         </arguments>
     </type>
