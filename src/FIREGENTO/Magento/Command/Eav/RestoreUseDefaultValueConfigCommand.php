@@ -48,7 +48,7 @@ class RestoreUseDefaultValueConfigCommand extends AbstractCommand
             $resource = \Mage::getModel('core/resource');
             $db = $resource->getConnection('core_write');
 
-            $configData = $db->fetchAll('SELECT DISTINCT path, value FROM ' . $this->_prefixTable('core_config_data'));
+            $configData = $db->fetchAll('SELECT DISTINCT path, value FROM ' . $this->_prefixTable('core_config_data') . ' WHERE scope_id = 0');
             foreach($configData as $config) {
                 $count = $db->fetchOne('SELECT COUNT(*) FROM ' . $this->_prefixTable('core_config_data') .' WHERE path = ? AND value = ?', array($config['path'], $config['value']));
                 if($count > 1) {
