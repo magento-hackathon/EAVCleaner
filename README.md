@@ -16,6 +16,7 @@ The Magento 1 version is in the [master branch](https://github.com/magento-hacka
 * `eav:check:models` Check if the assigned sourcemodel, backendmodel and frontendmodel still exist and if they are allowed to be used.
 * `eav:clean:removed-store-view-values` Remove attribute values for storeviews that don't exist anymore.
 * `eav:media:remove-unused` Remove unused product images.
+* `eav:attributes:remove-unused` Remove attributes with no values set in products and attributes that are not present in any attribute sets.
 * `eav:clean:entity-type-values` Remove attribute values with wrong entity_type_id. For example the table catalog_product_entity_int should only contain entries with entity_type_id == 10.
 * `eav:clean:attributes-and-values-without-parent` Remove catalog_eav_attribute and attribute values which are missing parent entry in eav_attribute. This can happen after importing data with foreign key check switched off.
 
