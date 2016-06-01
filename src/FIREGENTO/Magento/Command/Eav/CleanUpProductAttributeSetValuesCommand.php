@@ -105,7 +105,7 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
                                 $attrIds[] = $attribute['attribute_id'];
                             }
                         }
-                        if($product->geAttributeSetId() && count($attrIds)) {
+                        if($product->getAttributeSetId() && count($attrIds)) {
                             $attributeSets[$product->getAttributeSetId()] = implode(',', $attrIds);
                         }
                     }
