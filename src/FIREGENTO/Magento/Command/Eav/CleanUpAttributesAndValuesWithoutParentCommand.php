@@ -85,7 +85,7 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends AbstractCommand
             $this->verboseWriteLine($output, $query);
             $this->printVerboseQueryResult($input, $output, $results);
             if (!$isDryRun && count($results) > 0) {
-                $db->query("DELETE * FROM " . $this->_prefixTable('catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . $this->_prefixTable('eav_attribute') . "`)");
+                $db->query("DELETE FROM " . $this->_prefixTable('catalog_eav_attribute') . " WHERE `attribute_id` not in(SELECT attribute_id FROM `" . $this->_prefixTable('eav_attribute') . "`)");
             }
 
         }
