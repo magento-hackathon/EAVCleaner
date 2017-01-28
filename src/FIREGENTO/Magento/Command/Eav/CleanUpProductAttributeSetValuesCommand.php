@@ -10,7 +10,9 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
 {
-    const PAGE_SIZE = 100;
+    const BATCH_SIZE = 1000;
+
+    protected $_isDryRun;
 
     protected function configure()
     {
@@ -29,20 +31,19 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
      * 4. the product values are still in the database
      * 5. solution run this script ;-)
      *
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      *
      * @return void
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_input  = $input;
+        $this->_input = $input;
         $this->_output = $output;
-        $intFixedRow = 0; // if we fix a datarow we set this true
 
-        $isDryRun = $input->getOption('dry-run');
+        $this->_isDryRun = $input->getOption('dry-run');
 
-        if(!$isDryRun) {
+        if (!$this->_isDryRun) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
 
@@ -54,126 +55,194 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
 
         $this->_info('Start Cleaning Eav Values');
         $this->detectMagento($output);
+
         if ($this->initMagento()) {
+            $this->cleanEAV();
+        }
+    }
 
-            //allowed attribute types
-            $types = array('varchar', 'text', 'decimal', 'datetime', 'int');
+    protected function cleanEAV()
+    {
+        $fixedRowsQty = 0;
 
-            //attribute sets array
-            $attributeSets = array();
+        $entityTable = $this->_getTableName('catalog_product_entity');
 
-            //user defined attribute ids
-            $entityType = \Mage::getModel('eav/entity_type')->loadByCode('catalog_product');
+        $allowedAttributeTypes = ['varchar', 'text', 'decimal', 'datetime', 'int'];
+        $userDefinedAttributeIds = $this->_getUserDefinedAttributeIds();
 
-            //connection for raw queries
-            $connection = \Mage::getSingleton('core/resource')->getConnection('core_write');
+        $attributeSetList = $this->_getAttributeSetList();
 
-            $attributeCollection = $entityType->getAttributeCollection()->addFilter('is_user_defined', '1')->getItems();
-            $attrIds             = array();
-            foreach ($attributeCollection as $attribute) {
-                $attrIds[] = $attribute->getId();
+        $connection = $this->_isDryRun ? $this->_getWriteConnection() : $this->_getReadConnection();
+
+        foreach ($attributeSetList as $attributeSet){
+
+            $attributeSetId = $attributeSet['id'];
+            $attributeSetName = $attributeSet['name'];
+
+            $attributesIdsForAttributeSet = $this->_getAttributeIdsForAttributeSet($attributeSetId);
+            $attributeIdsToClean = array_diff($userDefinedAttributeIds, $attributesIdsForAttributeSet);
+            if (!count($attributeIdsToClean)){
+                continue;
             }
-            $userDefined = implode(',', $attrIds);
+            $attributeIdsToCleanFilter = implode(',', $attributeIdsToClean);
 
-            //product collection
-            $collection  = \Mage::getModel('catalog/product')->getCollection();
-            $entityTable = $collection->getTable(\Mage::getModel('eav/entity_type')->loadByCode('catalog_product')->getEntityTable());
-            /**  if ($this->getArg('products') != 'all') {
-                if ($ids = $this->_parseString($this->getArg('products'))) {
-                    $collection->addAttributeToFilter('entity_id', array('in' => $ids));
+            $productIds = $this->_getProductIdsForAttributeSet($attributeSetId);
+            $productQty = count($productIds);
+            if (!$productQty){
+                continue;
+            }
+
+            $this->_info('');
+            $this->_info(
+                sprintf('%s products found in "%s" attribute set.',
+                    $productQty,
+                    $attributeSetName
+                )
+            );
+            $this->_info('Looking for messy data...');
+
+            while (count($productIds)){
+
+                $batchSize = self::BATCH_SIZE;
+                $queueProductIds = array_splice($productIds, 0, $batchSize);
+                $queueProductsFilter = implode(',', $queueProductIds);
+
+                if ($productQty > $batchSize){
+                    $this->_info(
+                        sprintf(
+                            "\tBatch of %s products (%s in queue)...",
+                            count($queueProductIds),
+                            count($productIds) ? count($productIds) : "nothing"
+                        )
+                    );
                 }
-            }*/
-            $collection->setPageSize(self::PAGE_SIZE);
 
-            $pages       = $collection->getLastPageNumber();
-            $currentPage = 1;
+                foreach ($allowedAttributeTypes as $attributeType) {
 
-            //light product collection iterating
-            while ($currentPage <= $pages) {
-                $collection->setCurPage($currentPage);
-                $collection->load();
-
-                foreach ($collection->getItems() as $item) {
-                    $product = \Mage::getModel('catalog/product')->load($item->getId());
-
-                    //updating attribute ids for current products attribute set if necessary
-                    if (!isset($attributeSets[$product->getAttributeSetId()])) {
-                        $attributes = \Mage::getModel('catalog/product_attribute_api')->items($product->getAttributeSetId());
-                        $attrIds    = array();
-                        foreach ($attributes as $attribute) {
-                            if(isset($attribute['attribute_id']) && $attribute['attribute_id']) {
-                                $attrIds[] = $attribute['attribute_id'];
-                            }
-                        }
-                        if($product->getAttributeSetId() && count($attrIds)) {
-                            $attributeSets[$product->getAttributeSetId()] = implode(',', $attrIds);
-                        }
+                    if ($this->_isDryRun) {
+                        $sql = 'SELECT COUNT(*) FROM `';
+                    } else {
+                        $sql = 'DELETE FROM `';
                     }
 
-                    //deleting extra product attributes values for each backend type if the are not link to any
-                    //attribute set and user defined
+                    $sql = $sql . $entityTable . '_' . $attributeType . '`
+                                WHERE `entity_id` IN (' . $queueProductsFilter . ')
+                                    AND attribute_id IN (' . $attributeIdsToCleanFilter . ')';
 
-                    foreach ($types as $type) {
-                        if($isDryRun) {
-                            $sql = 'SELECT * FROM `';
-                        } else {
-                            $sql = 'DELETE FROM `';
-                        }
-                        $sql    =  $sql . $entityTable . '_' . $type . '`
-                                WHERE `entity_id` = ' . $product->getId() . '
-                                    AND attribute_id NOT IN (' . $attributeSets[$product->getAttributeSetId()] . ')
-                                    AND attribute_id IN (' . $userDefined . ')';
+                    if ($this->_isDryRun) {
+                        $rowsCount = $connection->fetchOne($sql);
+                    } else {
                         $result = $connection->query($sql);
-                        if($result->rowCount() > 0) {
-                            $intFixedRow += $result->rowCount();
-                        }
+                        $rowsCount = $result->rowCount();
+                    }
+
+                    if ($rowsCount > 0) {
+                        $fixedRowsQty += $rowsCount;
                     }
                 }
-
-                $currentPage++;
-                $collection->clear();
             }
-            if ($intFixedRow > 0) {
-                    $this->_info('We fix your Database '. $intFixedRow.' Rows :-) Done!');
-            } else {
-                $this->_info('Done without any change!');
-            }
+        }
 
+        if ($fixedRowsQty > 0) {
+            $this->_info(sprintf('We fix your Database %s Rows :-) Done!', $fixedRowsQty));
+        } else {
+            $this->_info('Done without any change!');
         }
     }
 
-    /**
-     * @param $diffValues
-     * @param $output
-     *
-     * @return void
-     */
-    private function output($diffValues, $output)
+    protected function _getUserDefinedAttributeIds()
     {
-        foreach ($diffValues as $key => $value) {
-            $output->write($key . '/');
-            if (is_array($value)) $this->output($value, $output);
-            else $output->writeln(' = ' . $value);
-        }
+        $attributeIds = [];
+        $entityType = $this->_getEntityType();
+        $attributeCollection = $entityType->getAttributeCollection()->addFilter('is_user_defined', '1')->getItems();
 
+        foreach ($attributeCollection as $attribute) {
+            $attributeIds[] = $attribute->getId();
+        }
+        return $attributeIds;
     }
 
-
-
-    /**
-     * Parse string with id's and return array
-     *
-     * @param string $string
-     * @return array
-     */
-    protected function _parseString($string)
+    protected function _getAttributeSetList()
     {
-        $ids = array();
-        if (!empty($string)) {
-            $ids = explode(',', $string);
-            $ids = array_map('trim', $ids);
-        }
-        return $ids;
+        $entityType = $this->_getEntityType();
+        $entityTypeId = $entityType->getEntityTypeId();
+
+        $attributeSetTable = $this->_getTableName('eav_attribute_set');
+        $connection = $this->_getReadConnection();
+        $select = $connection->select();
+
+        $select
+            ->from(
+                $attributeSetTable,
+                [
+                    'id' => 'attribute_set_id',
+                    'name' => 'attribute_set_name',
+                ]
+            )
+            ->where("entity_type_id = ?", $entityTypeId)
+        ;
+
+        return $connection->fetchAll($select);
     }
 
+    protected function _getProductIdsForAttributeSet($attributeSetId)
+    {
+        $catalogProductEntityTable = $this->_getTableName('catalog_product_entity');
+
+        $connection = $this->_getReadConnection();
+        $select = $connection->select();
+
+        $select
+            ->from($catalogProductEntityTable, ['entity_id'])
+            ->where('attribute_set_id = ?', $attributeSetId)
+        ;
+
+        return $connection->fetchCol($select);
+    }
+
+    protected function _getAttributeIdsForAttributeSet($attributeSetId)
+    {
+        $entityTypeId = $this->_getEntityTypeId();
+        $eavEntityAttributeTable = $this->_getTableName('eav_entity_attribute');
+
+        $connection = $this->_getReadConnection();
+        $select = $connection->select();
+
+        $select
+            ->from($eavEntityAttributeTable, ['attribute_id'])
+            ->where('entity_type_id = ?', $entityTypeId)
+            ->where('attribute_set_id = ?', $attributeSetId)
+        ;
+
+        $attributeIds = $connection->fetchCol($select);
+        return $attributeIds;
+    }
+
+    protected function _getEntityTypeId()
+    {
+        return $this->_getEntityType()->getEntityTypeId();
+    }
+
+    protected function _getEntityType()
+    {
+        $entityType = \Mage::getModel('eav/entity_type')->loadByCode('catalog_product');
+        return $entityType;
+    }
+
+    protected function _getTableName($table)
+    {
+        return \Mage::getSingleton('core/resource')->getTableName($table);
+    }
+
+    protected function _getReadConnection()
+    {
+        $resource = \Mage::getSingleton('core/resource');
+        return $resource->getConnection('core_read');
+    }
+
+    protected function _getWriteConnection()
+    {
+        $resource = \Mage::getSingleton('core/resource');
+        return $resource->getConnection('core_write');
+    }
 }
