@@ -132,8 +132,10 @@ class CleanUpProductAttributeSetValuesCommand extends AbstractCommand
                     if ($this->_isDryRun) {
                         $rowsCount = $connection->fetchOne($sql);
                     } else {
+                        $connection->beginTransaction();
                         $result = $connection->query($sql);
                         $rowsCount = $result->rowCount();
+                        $connection->commit();
                     }
 
                     if ($rowsCount > 0) {
