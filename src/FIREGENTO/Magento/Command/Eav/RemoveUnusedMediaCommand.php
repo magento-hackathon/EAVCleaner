@@ -65,15 +65,7 @@ class RemoveUnusedMediaCommand extends AbstractCommand
             $directoryIterator = new \RecursiveDirectoryIterator($imageDir);
             foreach( new \RecursiveIteratorIterator($directoryIterator) as $file) {
 
-                if (strpos( $file, "/cache" ) !== false) {
-                    continue;
-                }
-
-                if (strpos( $file, "/placeholder" ) !== false) {
-                    continue;
-                }
-
-                if (is_dir( $file )) {
+                if(strpos($file, "/cache") !== false || strpos($file, "/placeholder") !== false || is_dir($file) ) {
                     continue;
                 }
 
