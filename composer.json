@@ -15,7 +15,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "n98/magerun": ">=1.94.0"
+        "n98/magerun": ">=1.94.0",
+        "colinmollenhour/modman":">=1.12"
     },
     "autoload": {
         "psr-0": {
