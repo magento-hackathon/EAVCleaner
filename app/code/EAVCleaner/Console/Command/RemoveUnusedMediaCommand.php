@@ -18,7 +18,8 @@ class RemoveUnusedMediaCommand extends Command
         $this
             ->setName('eav:media:remove-unused')
             ->setDescription('Remove unused product images')
-            ->addOption('dry-run');
+            ->addOption('dry-run')
+            ->addOption('yes');
     }
 
     /**
@@ -34,13 +35,18 @@ class RemoveUnusedMediaCommand extends Command
         $filesize = 0;
         $countFiles = 0;
         $isDryRun = $input->getOption('dry-run');
+        $yes = $input->getOption('yes');
 
         if(!$isDryRun) {
-            $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
-            $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
-            $this->questionHelper = $this->getHelper('question');
-            if (!$this->questionHelper->ask($input, $output, $question)) {
-                return;
+            if ($yes) {
+              $output->writeln('Running removal.');
+            } else {
+              $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run. To bypass dry run check for automation purposes use --yes.');
+              $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
+              $this->questionHelper = $this->getHelper('question');
+              if (!$this->questionHelper->ask($input, $output, $question)) {
+                  return;
+              }
             }
         }
 
