@@ -21,7 +21,7 @@ See [issues labeled enhancement](https://github.com/magento-hackathon/EAVCleaner
 
 ### Installation
 
-Use composer or copy the app/code/EAVCleaner folder to your installation.
+Use composer or copy the app/code/Hackathon/EAVCleaner folder to your installation.
 
 ### Usage
 
