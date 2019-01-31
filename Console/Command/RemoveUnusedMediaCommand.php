@@ -35,7 +35,7 @@ class RemoveUnusedMediaCommand extends Command
         $countFiles = 0;
         $isDryRun = $input->getOption('dry-run');
 
-        if(!$isDryRun) {
+        if (!$isDryRun) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
             $this->questionHelper = $this->getHelper('question');
@@ -56,13 +56,14 @@ class RemoveUnusedMediaCommand extends Command
         $directoryIterator = new \RecursiveDirectoryIterator($imageDir);
 
         foreach (new \RecursiveIteratorIterator($directoryIterator) as $file) {
-
             if (strpos($file, "/cache") !== false || is_dir($file)) {
                 continue;
             }
 
             $filePath = str_replace($imageDir, "", $file);
-            if (empty($filePath)) continue;
+            if (empty($filePath)) {
+                continue;
+            }
             $value = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE value = ?', array($filePath));
             if ($value == false) {
                 $row = array();

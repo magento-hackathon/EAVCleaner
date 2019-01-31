@@ -6,12 +6,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
-
 class CleanUpAttributesAndValuesWithoutParentCommand extends Command
 {
-
-    var $questionHelper;
+    public $questionHelper;
 
     /**
      * Init command
@@ -38,7 +35,7 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends Command
     {
         $isDryRun = $input->getOption('dry-run');
 
-        if(!$isDryRun) {
+        if (!$isDryRun) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
 
@@ -54,7 +51,7 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends Command
         $db = $resConnection->getConnection();
         $types = array('varchar', 'int', 'decimal', 'text', 'datetime');
         $entityTypeCodes = array($db->getTableName('catalog_product'), $db->getTableName('catalog_category'), $db->getTableName('customer'), $db->getTableName('customer_address'));
-        foreach($entityTypeCodes as $code) {
+        foreach ($entityTypeCodes as $code) {
             $entityType = $objectManager->get('Magento\Eav\Model\Entity\Type')
                 ->getCollection()
                 ->addFieldToFilter('code', $code);
@@ -73,8 +70,6 @@ class CleanUpAttributesAndValuesWithoutParentCommand extends Command
                         . " FROM `$eavTable` where entity_type_id = " . $entityType->getEntityTypeId() . ")");
                 }
             }
-
         }
     }
-
 }

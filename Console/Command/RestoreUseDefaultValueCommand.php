@@ -6,12 +6,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
-
 class RestoreUseDefaultValueCommand extends Command
 {
-
-    var $questionHelper;
+    public $questionHelper;
 
     /**
      * Init command
@@ -38,7 +35,7 @@ class RestoreUseDefaultValueCommand extends Command
     {
         $isDryRun = $input->getOption('dry-run');
 
-        if(!$isDryRun) {
+        if (!$isDryRun) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
 
@@ -63,7 +60,8 @@ class RestoreUseDefaultValueCommand extends Command
 
             foreach ($rows as $row) {
                 // Select the global value if it's the same as the non-global value
-                $results = $db->fetchAll('SELECT * FROM ' . $fullTableName
+                $results = $db->fetchAll(
+                    'SELECT * FROM ' . $fullTableName
                     . ' WHERE attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
                     array($row['attribute_id'], 0, $row['entity_id'], $row['value'])
                 );
@@ -72,11 +70,14 @@ class RestoreUseDefaultValueCommand extends Command
                     foreach ($results as $result) {
                         if (!$isDryRun) {
                             // Remove the non-global value
-                            $db->query('DELETE FROM ' . $fullTableName . ' WHERE value_id = ?', $row['value_id']
+                            $db->query(
+                                'DELETE FROM ' . $fullTableName . ' WHERE value_id = ?',
+                                $row['value_id']
                             );
                         }
 
-                        $output->writeln('Deleting value ' . $row['value_id'] . ' "' . $row['value'] .'" in favor of ' . $result['value_id']
+                        $output->writeln(
+                            'Deleting value ' . $row['value_id'] . ' "' . $row['value'] .'" in favor of ' . $result['value_id']
                             . ' for attribute ' . $row['attribute_id'] . ' in table ' . $fullTableName
                         );
                         if (!isset($counts[$row['attribute_id']])) {
@@ -87,15 +88,19 @@ class RestoreUseDefaultValueCommand extends Command
                     }
                 }
 
-                $nullValues = $db->fetchOne('SELECT COUNT(*) FROM ' . $fullTableName
-                    . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
+                $nullValues = $db->fetchOne(
+                    'SELECT COUNT(*) FROM ' . $fullTableName
+                    . ' WHERE store_id = ? AND value IS NULL',
+                    array($row['store_id'])
                 );
 
                 if (!$isDryRun && $nullValues > 0) {
                     $output->writeln("Deleting " . $nullValues ." NULL value(s) from " . $fullTableName);
                     // Remove all non-global null values
-                    $db->query('DELETE FROM ' . $fullTableName
-                        . ' WHERE store_id = ? AND value IS NULL', array($row['store_id'])
+                    $db->query(
+                        'DELETE FROM ' . $fullTableName
+                        . ' WHERE store_id = ? AND value IS NULL',
+                        array($row['store_id'])
                     );
                 }
             }
@@ -103,12 +108,9 @@ class RestoreUseDefaultValueCommand extends Command
 
             if (count($counts)) {
                 $output->writeln('Done');
-            }
-            else {
+            } else {
                 $output->writeln('There were no attribute values to clean up');
             }
-
         }
     }
-
 }
