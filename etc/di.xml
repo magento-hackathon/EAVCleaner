@@ -4,21 +4,20 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="hello_world" xsi:type="object">Hackaton\EAVCleaner\Console\Command\HelloWorldCommand</item>
                 <item name="attributes:restore-use-default-value" xsi:type="object">
-                    Hackaton\EAVCleaner\Console\Command\RestoreUseDefaultValueCommand
+                    Hackathon\EAVCleaner\Console\Command\RestoreUseDefaultValueCommand
                 </item>
                 <item name="config:restore-use-default-value" xsi:type="object">
-                    Hackaton\EAVCleaner\Console\Command\RestoreUseDefaultConfigValueCommand
+                    Hackathon\EAVCleaner\Console\Command\RestoreUseDefaultConfigValueCommand
                 </item>
                 <item name="media:remove-unused" xsi:type="object">
-                    Hackaton\EAVCleaner\Console\Command\RemoveUnusedMediaCommand
+                    Hackathon\EAVCleaner\Console\Command\RemoveUnusedMediaCommand
                 </item>
                 <item name="attributes:remove-unused" xsi:type="object">
-                    Hackaton\EAVCleaner\Console\Command\RemoveUnusedAttributesCommand
+                    Hackathon\EAVCleaner\Console\Command\RemoveUnusedAttributesCommand
                 </item>
                 <item name="clean:attributes-and-values-without-parent" xsi:type="object">
-                    Hackaton\EAVCleaner\Console\Command\CleanUpAttributesAndValuesWithoutParentCommand
+                    Hackathon\EAVCleaner\Console\Command\CleanUpAttributesAndValuesWithoutParentCommand
                 </item>
             </argument>
         </arguments>

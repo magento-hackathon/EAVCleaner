@@ -1,5 +1,5 @@
 <?php
-namespace Hackaton\EAVCleaner\Console\Command;
+namespace Hackathon\EAVCleaner\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
