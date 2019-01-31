@@ -1,4 +1,4 @@
-# EAV Cleaner Console Command
+# Magento 2 EAV Cleaner Console Command
 
 Purpose of this project is to check for different flaws that can occur due to EAV and provide cleanup functions.
 
