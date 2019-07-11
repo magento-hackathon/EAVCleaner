@@ -31,7 +31,7 @@ class RemoveUnusedAttributesCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $isDryRun = $input->getOption('dry-run');
-        if (!$isDryRun) {
+        if (!$isDryRun && $input->isInteractive()) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
             $this->questionHelper = $this->getHelper('question');
