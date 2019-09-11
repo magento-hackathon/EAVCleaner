@@ -1,6 +1,9 @@
 <?php
+
 namespace Hackathon\EAVCleaner\Console\Command;
 
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -8,8 +11,32 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Input\InputOption;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * Class RemoveUnusedMediaCommand
+ * @package Hackathon\EAVCleaner\Console\Command
+ */
 class RemoveUnusedMediaCommand extends Command
 {
+    /**
+     * @var ResourceConnection
+     */
+    protected $resourceConnection;
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    public function __construct(
+        Filesystem $filesystem,
+        ResourceConnection $resourceConnection,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->resourceConnection = $resourceConnection;
+        $this->filesystem = $filesystem;
+    }
+
+
     /**
      * Init command
      */
@@ -31,62 +58,86 @@ class RemoveUnusedMediaCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $filesize = 0;
+        $fileSize = 0;
         $countFiles = 0;
         $isDryRun = $input->getOption('dry-run');
 
         if (!$isDryRun) {
-            $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
-            $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
-            $this->questionHelper = $this->getHelper('question');
-            if (!$this->questionHelper->ask($input, $output, $question)) {
+            $output->writeln(
+                '<comment>WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.</comment>'
+            );
+            $question = new ConfirmationQuestion('<comment>Are you sure you want to continue? [No]</comment>', false);
+            if (!$this->getHelper('question')->ask($input, $output, $question)) {
                 return;
             }
         }
 
-        $table = array();
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $filesystem = $objectManager->get('Magento\Framework\Filesystem');
-        $directory = $filesystem->getDirectoryRead(DirectoryList::MEDIA);
-        $imageDir = $directory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'product';
-        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $mediaGallery = $resource->getConnection()->getTableName('catalog_product_entity_media_gallery');
-        $coreRead = $resource->getConnection('core_read');
-        $i = 0;
+        $imageDir = $this->getImageDir();
+        $connection = $this->resourceConnection->getConnection('core_read');
+        $mediaGalleryTable = $connection->getTableName(
+            'catalog_product_entity_media_gallery'
+        );
+
         $directoryIterator = new \RecursiveDirectoryIterator($imageDir);
 
         foreach (new \RecursiveIteratorIterator($directoryIterator) as $file) {
-            if (strpos($file, "/cache") !== false || is_dir($file)) {
+
+            // Cached path guard
+            if ($this->isInCachePath($file)) {
                 continue;
             }
 
+            // Directory guard
+            if (is_dir($file)) {
+                continue;
+            }
+
+            // Filepath guard
             $filePath = str_replace($imageDir, "", $file);
             if (empty($filePath)) {
                 continue;
             }
-            $value = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE value = ?', array($filePath));
-            if ($value == false) {
-                $row = array();
-                $row[] = $filePath;
-                $table[] = $row;
-                $filesize += filesize($file);
-                $countFiles++;
-                echo '## REMOVING: ' . $filePath . ' ##';
-                if (!$isDryRun) {
-                    unlink($file);
-                } else {
-                    echo ' -- DRY RUN';
-                }
-                echo PHP_EOL;
-                $i++;
+
+            $imageFound = $connection->fetchOne(
+                'SELECT value FROM ' . $mediaGalleryTable . ' WHERE value = ?', array($filePath)
+            );
+            if ($imageFound) {
+                continue;
+            }
+
+            $fileSize += filesize($file);
+            $countFiles++;
+            if (!$isDryRun) {
+                unlink($file);
+                $output->writeln('## REMOVING: ' . $filePath . ' ##');
+            } else {
+                $output->writeln('## WOULD REMOVE: ' . $filePath . ' ##');
             }
         }
 
-        $headers = array();
-        $headers[] = 'filepath';
-        $this->getHelper('table')
-            ->setHeaders($headers)
-            ->setRows($table)->render($output);
-        $output->writeln("Found " . number_format($filesize / 1024 / 1024, '2') . " MB unused images in $countFiles files");
+        $this->printResult($output, $isDryRun, $countFiles, $fileSize);
+    }
+
+    private function printResult(OutputInterface $output, $isDryRun, int $countFiles, int $filesize): void
+    {
+        $actionName = 'Deleted';
+        if ($isDryRun) {
+            $actionName = 'Would delete';
+        }
+        $fileSizeInMB = number_format($filesize / 1024 / 1024, '2');
+
+        $output->writeln("<info>{$actionName} {$countFiles} unused images. {$fileSizeInMB} MB</info>");
+    }
+
+    private function getImageDir(): string
+    {
+        $directory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
+        return $directory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'product';
+    }
+
+
+    private function isInCachePath(?string $file): bool
+    {
+        return strpos($file, "/cache") !== false;
     }
 }
