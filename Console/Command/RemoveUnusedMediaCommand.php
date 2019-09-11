@@ -36,7 +36,6 @@ class RemoveUnusedMediaCommand extends Command
         $this->filesystem = $filesystem;
     }
 
-
     /**
      * Init command
      */
@@ -48,15 +47,7 @@ class RemoveUnusedMediaCommand extends Command
             ->addOption('dry-run');
     }
 
-    /**
-     * Execute Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return void;
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output) : void
     {
         $fileSize = 0;
         $countFiles = 0;
