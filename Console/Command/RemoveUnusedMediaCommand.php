@@ -53,7 +53,7 @@ class RemoveUnusedMediaCommand extends Command
         $countFiles = 0;
         $isDryRun = $input->getOption('dry-run');
 
-        if (!$isDryRun) {
+        if (!$isDryRun && $input->isInteractive()) {
             $output->writeln(
                 '<comment>WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.</comment>'
             );
