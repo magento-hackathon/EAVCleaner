@@ -18,12 +18,13 @@
         "n98/magerun": ">=1.94.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6"
+        "phpunit/phpunit": "^8"
     },
     "autoload": {
         "psr-0": {
             "FIREGENTO": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

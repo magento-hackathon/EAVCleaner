@@ -5,7 +5,7 @@ use FIREGENTO\Magento\Command\Eav\RemoveUnusedMediaCommand;
 
 class RemoveUnusedMediaCommantTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->command = new RemoveUnusedMediaCommand();
     }
