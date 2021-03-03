@@ -1,17 +1,14 @@
 <?php
-namespace Hackaton\EAVCleaner\Console\Command;
+namespace Hackathon\EAVCleaner\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
-
 class RestoreUseDefaultConfigValueCommand extends Command
 {
-
-    var $questionHelper;
+    public $questionHelper;
 
     /**
      * Init command
@@ -38,7 +35,7 @@ class RestoreUseDefaultConfigValueCommand extends Command
     {
         $isDryRun = $input->getOption('dry-run');
 
-        if(!$isDryRun) {
+        if (!$isDryRun && $input->isInteractive()) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
             $question = new ConfirmationQuestion('Are you sure you want to continue? [No] ', false);
 
@@ -56,19 +53,16 @@ class RestoreUseDefaultConfigValueCommand extends Command
         $resConnection = $objectManager->get('Magento\Framework\App\ResourceConnection');
         $db = $resConnection->getConnection();
         $configData = $db->fetchAll('SELECT DISTINCT path, value FROM ' . $db->getTableName('core_config_data') . ' WHERE scope_id = 0');
-        foreach($configData as $config) {
+        foreach ($configData as $config) {
             $count = $db->fetchOne('SELECT COUNT(*) FROM ' . $db->getTableName('core_config_data') .' WHERE path = ? AND value = ?', array($config['path'], $config['value']));
-            if($count > 1) {
+            if ($count > 1) {
                 $output->writeln('Config path ' . $config['path'] . ' with value ' . $config['value']. ' has ' . $count . ' values; deleting non-default values');
-                if(!$isDryRun) {
+                if (!$isDryRun) {
                     $db->query('DELETE FROM ' . $db->getTableName('core_config_data') . ' WHERE path = ? AND value = ? AND scope_id != ?', array($config['path'], $config['value'], 0));
                 }
                 $removedConfigValues += ($count-1);
             }
         }
         $output->writeln('Removed ' . $removedConfigValues . ' values from core_config_data table.');
-
-        
     }
-
 }
