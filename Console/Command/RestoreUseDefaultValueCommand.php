@@ -1,6 +1,7 @@
 <?php
 namespace Hackathon\EAVCleaner\Console\Command;
 
+use Magento\Framework\App\ProductMetadataInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -9,6 +10,20 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class RestoreUseDefaultValueCommand extends Command
 {
     public $questionHelper;
+
+    /**
+     * @var ProductMetaDataInterface
+     */
+    protected $productMetaData;
+
+    public function __construct(
+        ProductMetaDataInterface $productMetaData,
+        string $name = null
+    )
+    {
+        parent::__construct($name);
+        $this->productMetaData = $productMetaData;
+    }
 
     /**
      * Init command
@@ -52,6 +67,8 @@ class RestoreUseDefaultValueCommand extends Command
         $counts = array();
         $i = 0;
         $tables = array('varchar', 'int', 'decimal', 'text', 'datetime');
+        $column = $this->productMetaData->getEdition() === 'Enterprise' ? 'row_id' : 'entity_id';
+
 
         foreach ($tables as $table) {
             // Select all non-global values
@@ -62,8 +79,8 @@ class RestoreUseDefaultValueCommand extends Command
                 // Select the global value if it's the same as the non-global value
                 $results = $db->fetchAll(
                     'SELECT * FROM ' . $fullTableName
-                    . ' WHERE attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
-                    array($row['attribute_id'], 0, $row['entity_id'], $row['value'])
+                    . ' WHERE attribute_id = ? AND store_id = ? AND ' . $column . ' = ? AND value = ?',
+                    array($row['attribute_id'], 0, $row[$column], $row['value'])
                 );
 
                 if (count($results) > 0) {
