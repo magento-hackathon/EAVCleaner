@@ -70,16 +70,10 @@ class RemoveUnusedMediaCommand extends Command
         );
 
         $directoryIterator = new \RecursiveDirectoryIterator($imageDir);
-
-        $imagesToKeepArray = $connection->fetchAll(
+        
+        $imagesToKeep = $connection->fetchCol(
             'SELECT value FROM ' . $mediaGalleryTable
         );
-
-        $imagesToKeep = [];
-
-        foreach ($imagesToKeepArray as $image) {
-            $imagesToKeep[] = $image['value'];
-        }
 
         foreach (new \RecursiveIteratorIterator($directoryIterator) as $file) {
 
