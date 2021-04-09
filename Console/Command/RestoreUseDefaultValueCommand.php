@@ -79,7 +79,7 @@ class RestoreUseDefaultValueCommand extends Command
                 // Select the global value if it's the same as the non-global value
                 $results = $db->fetchAll(
                     'SELECT * FROM ' . $fullTableName
-                    . ' WHERE attribute_id = ? AND store_id = ? AND ' . $column . ' = ? AND value = ?',
+                    . ' WHERE attribute_id = ? AND store_id = ? AND ' . $column . ' = ? AND BINARY value = ?',
                     array($row['attribute_id'], 0, $row[$column], $row['value'])
                 );
 
