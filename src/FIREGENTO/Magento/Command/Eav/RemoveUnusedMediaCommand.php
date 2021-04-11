@@ -97,7 +97,7 @@ class RemoveUnusedMediaCommand extends AbstractCommand
                     continue;
                 }
 
-                $value = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE value = ?', array($filePath));
+                $value = $coreRead->fetchOne('SELECT value FROM ' . $mediaGallery . ' WHERE BINARY value = ?', array($filePath));
 
                 if ($value == false) {
                     $row = array();

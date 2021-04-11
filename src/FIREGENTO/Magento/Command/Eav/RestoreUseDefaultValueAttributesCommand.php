@@ -57,7 +57,7 @@ class RestoreUseDefaultValueAttributesCommand extends AbstractCommand
                 foreach ($rows as $row) {
                     // Select the global value if it's the same as the non-global value
                     $results = $db->fetchAll('SELECT * FROM ' . $fullTableName
-                        . ' WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND value = ?',
+                        . ' WHERE entity_type_id = ? AND attribute_id = ? AND store_id = ? AND entity_id = ? AND BINARY value = ?',
                         array($row['entity_type_id'], $row['attribute_id'], 0, $row['entity_id'], $row['value'])
                     );
 

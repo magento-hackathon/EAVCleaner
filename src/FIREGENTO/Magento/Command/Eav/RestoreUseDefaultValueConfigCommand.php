@@ -50,11 +50,11 @@ class RestoreUseDefaultValueConfigCommand extends AbstractCommand
 
             $configData = $db->fetchAll('SELECT DISTINCT path, value FROM ' . $this->_prefixTable('core_config_data') . ' WHERE scope_id = 0');
             foreach($configData as $config) {
-                $count = $db->fetchOne('SELECT COUNT(*) FROM ' . $this->_prefixTable('core_config_data') .' WHERE path = ? AND value = ?', array($config['path'], $config['value']));
+                $count = $db->fetchOne('SELECT COUNT(*) FROM ' . $this->_prefixTable('core_config_data') .' WHERE path = ? AND BINARY value = ?', array($config['path'], $config['value']));
                 if($count > 1) {
                     $output->writeln('Config path ' . $config['path'] . ' with value ' . $config['value']. ' has ' . $count . ' values; deleting non-default values');
                     if(!$isDryRun) {
-                        $db->query('DELETE FROM ' . $this->_prefixTable('core_config_data') . ' WHERE path = ? AND value = ? AND scope_id != ?', array($config['path'], $config['value'], 0));
+                        $db->query('DELETE FROM ' . $this->_prefixTable('core_config_data') . ' WHERE path = ? AND BINARY value = ? AND scope_id != ?', array($config['path'], $config['value'], 0));
                     }
                     $removedConfigValues += ($count-1);
                 }
