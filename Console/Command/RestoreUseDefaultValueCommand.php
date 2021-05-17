@@ -4,6 +4,7 @@ namespace Hackathon\EAVCleaner\Console\Command;
 use Magento\Framework\App\ProductMetadataInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -35,7 +36,8 @@ class RestoreUseDefaultValueCommand extends Command
             ->setDescription("
                 Restore product's 'Use Default Value' if the non-global value is the same as the global value
             ")
-            ->addOption('dry-run');
+            ->addOption('dry-run')
+            ->addOption('entity', null, InputOption::VALUE_REQUIRED, "Set entity to cleanup (product or category)");
     }
 
     /**
@@ -49,6 +51,12 @@ class RestoreUseDefaultValueCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $isDryRun = $input->getOption('dry-run');
+        $entity = $input->getOption('entity');
+
+        if (!in_array($entity, ['product', 'category'])) {
+            $output->writeln('Please specify the entity with --entity. Possible options are product or category');
+            return;
+        }
 
         if (!$isDryRun && $input->isInteractive()) {
             $output->writeln('WARNING: this is not a dry run. If you want to do a dry-run, add --dry-run.');
@@ -72,7 +80,7 @@ class RestoreUseDefaultValueCommand extends Command
 
         foreach ($tables as $table) {
             // Select all non-global values
-            $fullTableName = $db->getTableName('catalog_product_entity_' . $table);
+            $fullTableName = $db->getTableName('catalog_'. $entity. '_entity_' . $table);
             $rows = $db->fetchAll('SELECT * FROM ' . $fullTableName . ' WHERE store_id != 0');
 
             foreach ($rows as $row) {
