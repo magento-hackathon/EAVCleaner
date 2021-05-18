@@ -37,7 +37,13 @@ class RestoreUseDefaultValueCommand extends Command
                 Restore product's 'Use Default Value' if the non-global value is the same as the global value
             ")
             ->addOption('dry-run')
-            ->addOption('entity', null, InputOption::VALUE_REQUIRED, "Set entity to cleanup (product or category)");
+            ->addOption(
+                'entity',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Set entity to cleanup (product or category)',
+                'product'
+            );
     }
 
     /**
