@@ -80,7 +80,7 @@ class RestoreUseDefaultValueCommand extends Command
 
         foreach ($tables as $table) {
             // Select all non-global values
-            $fullTableName = $db->getTableName('catalog_'. $entity. '_entity_' . $table);
+            $fullTableName = $db->getTableName('catalog_' . $entity . '_entity_' . $table);
             $rows = $db->fetchAll('SELECT * FROM ' . $fullTableName . ' WHERE store_id != 0');
 
             foreach ($rows as $row) {
