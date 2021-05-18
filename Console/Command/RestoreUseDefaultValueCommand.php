@@ -37,7 +37,13 @@ class RestoreUseDefaultValueCommand extends Command
                 Restore product's 'Use Default Value' if the non-global value is the same as the global value
             ")
             ->addOption('dry-run')
-            ->addOption('entity', null, InputOption::VALUE_REQUIRED, "Set entity to cleanup (product or category)");
+            ->addOption(
+                'entity',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Set entity to cleanup (product or category)',
+                'product'
+            );
     }
 
     /**
@@ -80,7 +86,7 @@ class RestoreUseDefaultValueCommand extends Command
 
         foreach ($tables as $table) {
             // Select all non-global values
-            $fullTableName = $db->getTableName('catalog_'. $entity. '_entity_' . $table);
+            $fullTableName = $db->getTableName('catalog_' . $entity . '_entity_' . $table);
             $rows = $db->fetchAll('SELECT * FROM ' . $fullTableName . ' WHERE store_id != 0');
 
             foreach ($rows as $row) {
