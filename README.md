@@ -6,7 +6,7 @@ Use --dry-run to check result without modifying data.
 
 # Magento 1 or Magento 2?
 
-The Magento 1 version is in the [master branch](https://github.com/magento-hackathon/EAVCleaner/tree/master), the Magento 2 version is in the [magento2 branch](https://github.com/magento-hackathon/EAVCleaner/tree/magento2).
+The Magento 1 version is in this repository, the Magento 2 version is in [another repository](https://github.com/magento-hackathon/module-eavcleaner-m2).
 
 # Commands
 
